@@ -6,8 +6,10 @@ const logger = require('./middleware/logger');
 const bootcamps = require('./routes/bootcamp');
 const colors = require('colors');
 const connectDB = require('./config/db');
-
+const errorHandler = require('./middleware/error');
 dotEnv.config({path: './config/config.env'});
+
+
 connectDB();
 app.use(express.json());
 
@@ -16,6 +18,7 @@ if(process.env.NODE_ENV === 'development'){
 }
 
 app.use('/api/v1/bootcamp', bootcamps);
+app.use(errorHandler);
 
 const port = process.env.PORT || 30025;
 const server = app.listen(port, () =>
