@@ -40,7 +40,7 @@ const BootcampSchema = new mongoose.Schema({
             enum: ['Point'],
             required: false
         },
-        coordination: {
+        coordinates: {
             type: [Number],
             required: false,
             index: '2dsphere'
