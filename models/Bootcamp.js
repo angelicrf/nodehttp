@@ -21,16 +21,16 @@ const BootcampSchema = new mongoose.Schema({
         match: [/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
             'Please use a valid url']
     },
-    email:{
+    email: {
         type: String,
         match: [/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
             'Please enter a right email format']
     },
-    phone:{
+    phone: {
         type: String,
         maxLength: [20, 'Please enter right phone number']
     },
-    address:{
+    address: {
         type: String,
         required: [true, 'Please add an address']
     },
@@ -69,8 +69,8 @@ const BootcampSchema = new mongoose.Schema({
         min: [1, 'Rating must at least 1 character'],
         max: [10, 'Rating should not have to exceed 10  characters']
     },
-    averageCost:Number,
-    photo:{
+    averageCost: Number,
+    photo: {
         type: String,
         default: '-no-photo.jpg'
     },
@@ -82,20 +82,23 @@ const BootcampSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    jobGuarantee:{
+    jobGuarantee: {
         type: Boolean,
         default: false
     },
-    acceptGi:{
+    acceptGi: {
         type: Boolean,
         default: false
     },
     createdAt: {
         type: Date,
         default: Date.now()
+    }},
+    {
+        toJSON: {virtuals: true},
+        toObject: {virtuals: true}
     }
-
-});
+);
 
 BootcampSchema.pre('save', function (next) {
     this.slug = slugify(this.name, {lower: true});
@@ -115,5 +118,18 @@ BootcampSchema.pre('save', async function (next) {
     };
     this.address = undefined;
     next();
+});
+BootcampSchema.pre('remove', async function(next){
+    console.log(`The deleted bootcamp is ${this._id}`);
+    await this.model('Courses').deleteMany({
+        bootcamp: this._id
+    });
+    next();
+});
+BootcampSchema.virtual('courses', {
+    ref: 'Courses',
+    localField: '_id',
+    foreignField: 'bootcamp',
+    justOne: false
 });
 module.exports = mongoose.model('Bootcamp', BootcampSchema);

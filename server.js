@@ -4,6 +4,7 @@ const dotEnv = require('dotenv');
 const morgan = require('morgan');
 const logger = require('./middleware/logger');
 const bootcamps = require('./routes/bootcamp');
+const courses  = require('./routes/courses');
 const colors = require('colors');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
@@ -18,6 +19,7 @@ if(process.env.NODE_ENV === 'development'){
 }
 
 app.use('/api/v1/bootcamp', bootcamps);
+app.use('/api/v1/courses', courses);
 app.use(errorHandler);
 
 const port = process.env.PORT || 30025;
